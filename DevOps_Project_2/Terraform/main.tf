@@ -22,6 +22,20 @@ resource "aws_instance" "dev_machine" {
     Name        = "${var.name}-server"
   }
 }
+ provisioner "remote-exec" {
+    inline = ["echo 'Wait until SSH is ready'"]
+
+    connection {
+      type        = "ssh"
+      user        = local.ssh_user
+      private_key = file(local.private_key_path)
+      host        = aws_instance.nginx.public_ip
+    }
+  }
+  provisioner "local-exec" {
+    command = "ansible-playbook  -i ${aws_instance.nginx.public_ip}, --private-key ${local.private_key_path} nginx.yaml"
+  }
+}
 
 output "public_ip" {
   value = aws_instance.dev_machine.public_ip 
