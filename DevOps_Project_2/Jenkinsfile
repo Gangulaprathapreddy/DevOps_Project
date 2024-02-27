@@ -14,5 +14,5 @@ if [ $TERRAFORM_ACTION = "destroy" ]; then
 	exit 0
 else
 	cd ../Ansible
-	ansible-playbook -i /opt/ansible/inventory/demo.aws.aws_ec2.yaml apache.yaml
+	ansible-playbook -i /home/ec2-user/demo.aws.aws_ec2.yaml apache.yaml
 fi
