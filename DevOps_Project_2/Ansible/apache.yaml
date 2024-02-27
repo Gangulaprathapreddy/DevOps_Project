@@ -1,5 +1,5 @@
 - name: Installing WebServer
-  hosts: all
+  hosts: 13.232.145.27
   remote_user: ec2-user
   become: 'yes'
   become_user: root
