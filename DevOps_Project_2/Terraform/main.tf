@@ -13,8 +13,7 @@ data "aws_ami" "amazon-linux" {
 }
 
 locals {
-  ssh_user          = "ec2-user"
-  private_key_path  = "/home/ubuntu/Terraform/terraform"
+  ssh_user = "ec2-user"
 }
 
 resource "aws_instance" "dev_machine" {
@@ -33,12 +32,12 @@ resource "aws_instance" "dev_machine" {
     connection {
       type        = "ssh"
       user        = local.ssh_user
-      private_key = file(local.private_key_path)
+      private_key = aws_instance.dev_machine.key_name != "" ? null : ""
       host        = aws_instance.dev_machine.public_ip
     }
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ${local.private_key_path} nginx.yaml"
+    command = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, nginx.yaml"
   }
 }
