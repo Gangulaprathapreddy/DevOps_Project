@@ -1,43 +1,38 @@
-data "aws_ami" "amazon-linux" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-kernel-5.10-hvm-*-x86_64-gp2"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
-locals {
-  ssh_user = "ec2-user"
-}
-
-resource "aws_instance" "dev_machine" {
-  ami           = data.aws_ami.amazon-linux.id
-  instance_type = "t2.micro"
-  key_name      = "terraform"
+resource "aws_instance" "r100c96" {
+  ami               = "ami-0a9d27a9f4f5c0efc"
+  instance_type     = "t2.micro"
+  availability_zone = "ap-south-1b"
+  key_name          = "aws-exam-testing"
 
   tags = {
-    Environment = "dev"
-    Name        = "${var.name}-server"
+    Name = "Terraform-diff-linux"
   }
 
   provisioner "remote-exec" {
-    inline = ["echo 'Wait until SSH is ready'"]
-
+    inline = ["sudo hostnamectl set-hostname cloudEc2.technix.com"]
     connection {
+      host        = self.public_dns
       type        = "ssh"
-      user        = local.ssh_user
-      private_key = aws_instance.dev_machine.key_name != "" ? null : ""
-      host        = aws_instance.dev_machine.public_ip
+      user        = "ec2-user"
+      private_key = file("./aws-exam-testing.pem")
     }
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, nginx.yaml"
+    command = "echo ${self.public_dns} > inventory"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ${aws_instance.r100c96.public_ip}, --private-key ./aws-exam-testing.pem nginx.yaml"
+    working_dir = path.module  # Added to set the working directory
   }
 }
+
+output "ip" {
+  value = aws_instance.r100c96.public_ip
+}
+
+output "publicName" {
+  value = aws_instance.r100c96.public_dns
+}
+
