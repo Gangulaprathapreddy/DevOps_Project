@@ -1,15 +1,21 @@
+---
 - name: Installing WebServer
-  hosts: 13.232.145.27
+  hosts: all
   remote_user: ec2-user
-  become: 'yes'
+  become: yes  # Removed quotes around 'yes'
   become_user: root
 
   tasks:
-    - name: Ensure Apache is at the Latest Version
+    - name: Ensure Nginx is at the Latest Version  # Updated for Nginx
       yum:
-        name: httpd
+        name: nginx  # Updated for Nginx
         state: latest
-    - name: Ensure Apache is Running
+    - name: Ensure Nginx is Running  # Updated for Nginx
       service:
-        name: httpd
+        name: nginx  # Updated for Nginx
         state: started
+
+~
+~
+~
+~
