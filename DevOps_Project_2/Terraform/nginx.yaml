@@ -1,0 +1,15 @@
+- name: Installing WebServer
+  hosts: 13.232.145.27
+  remote_user: ec2-user
+  become: 'yes'
+  become_user: root
+
+  tasks:
+    - name: Ensure Apache is at the Latest Version
+      yum:
+        name: httpd
+        state: latest
+    - name: Ensure Apache is Running
+      service:
+        name: httpd
+        state: started
