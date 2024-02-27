@@ -13,12 +13,16 @@ data "aws_ami" "amazon-linux" {
 }
 
 resource "aws_instance" "dev_machine" {
-  ami = data.aws_ami.amazon-linux.id
+  ami           = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
-  key_name = "terraform"
+  key_name      = "terraform"
 
   tags = {
     Environment = "dev"
-    Name = "${var.name}-server"
+    Name        = "${var.name}-server"
   }
+}
+
+output "public_ip" {
+  value = aws_instance.dev_machine.public_ip 
 }
