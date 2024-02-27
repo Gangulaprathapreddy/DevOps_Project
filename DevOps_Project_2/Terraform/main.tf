@@ -1,8 +1,9 @@
+
 resource "aws_instance" "r100c96" {
   ami               = "ami-0a9d27a9f4f5c0efc"
   instance_type     = "t2.micro"
   availability_zone = "ap-south-1b"
-  key_name          = "aws-exam-testing"
+  key_name          = aws_key_pair.exam_testing.key_name
 
   tags = {
     Name = "Terraform-diff-linux"
@@ -14,7 +15,7 @@ resource "aws_instance" "r100c96" {
       host        = self.public_dns
       type        = "ssh"
       user        = "ec2-user"
-      private_key = aws-exam-testing.pem
+      private_key = aws_key_pair.exam_testing.private_key_pem
     }
   }
 
@@ -23,9 +24,14 @@ resource "aws_instance" "r100c96" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.r100c96.public_ip}, --private-key ./aws-exam-testing.pem nginx.yaml"
+    command     = "ansible-playbook -i ${aws_instance.r100c96.public_ip}, --private-key ./aws-exam-testing.pem nginx.yaml"
     working_dir = path.module  # Added to set the working directory
   }
+}
+
+resource "aws_key_pair" "exam_testing" {
+  key_name   = "aws-exam-testing"
+  public_key = file("aws-exam-testing.pub")
 }
 
 output "ip" {
@@ -35,4 +41,3 @@ output "ip" {
 output "publicName" {
   value = aws_instance.r100c96.public_dns
 }
-
