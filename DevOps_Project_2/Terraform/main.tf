@@ -27,7 +27,9 @@ resource "aws_instance" "dev_machine" {
 
 resource "aws_key_pair" "exam_testing" {
   key_name = "aws-exam-testing.pem"
+  public_key = aws_key_pair.exam_testing.public_key  # This assumes AWS automatically provides the public key
 }
+
 
 output "ip" {
   value = aws_instance.dev_machine.public_ip
