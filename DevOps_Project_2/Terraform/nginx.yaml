@@ -2,20 +2,16 @@
 - name: Installing WebServer
   hosts: all
   remote_user: ec2-user
-  become: yes  # Removed quotes around 'yes'
+  become: yes
   become_user: root
 
   tasks:
-    - name: Ensure Nginx is at the Latest Version  # Updated for Nginx
+    - name: Ensure Nginx is at the Latest Version
       yum:
-        name: nginx  # Updated for Nginx
+        name: nginx
         state: latest
-    - name: Ensure Nginx is Running  # Updated for Nginx
+    - name: Ensure Nginx is Running
       service:
-        name: nginx  # Updated for Nginx
+        name: nginx
         state: started
 
-~
-~
-~
-~
