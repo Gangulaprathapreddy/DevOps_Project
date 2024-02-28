@@ -1,5 +1,3 @@
-
-
 data "aws_ami" "amazon-linux" {
   most_recent = true
 
@@ -19,7 +17,7 @@ data "aws_ami" "amazon-linux" {
 resource "aws_instance" "dev_machine" {
   ami           = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
-  key_name      = "aws-exam-testing.pem"
+  key_name      = aws_key_pair.exam_testing.key_name  # Use the key_name attribute of the key pair resource
 
   provisioner "local-exec" {
     command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}  nginx.yaml"
@@ -27,7 +25,7 @@ resource "aws_instance" "dev_machine" {
   }
 }
 
-data "aws_key_pair" "exam_testing" {
+resource "aws_key_pair" "exam_testing" {
   key_name = "aws-exam-testing"
 }
 
@@ -40,5 +38,5 @@ output "publicName" {
 }
 
 output "public_key" {
-  value = data.aws_key_pair.exam_testing.public_key
+  value = aws_key_pair.exam_testing.public_key
 }
