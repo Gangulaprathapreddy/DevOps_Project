@@ -13,14 +13,18 @@ data "aws_ami" "amazon-linux" {
 }
 
 resource "aws_instance" "dev_machine" {
-  ami = data.aws_ami.amazon-linux.id
+  ami           = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
-  key_name = "aws-exam-testing.pem"
+  key_name      = "aws-exam-testing.pem"
 
   provisioner "local-exec" {
     command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./aws-exam-testing.pem nginx.yaml"
     working_dir = path.module  # Added to set the working directory
   }
+}
+
+data "aws_key_pair" "exam_testing" {
+  key_name = "aws-exam-testing.pem"
 }
 
 output "ip" {
