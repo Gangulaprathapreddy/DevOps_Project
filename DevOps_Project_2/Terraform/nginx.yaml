@@ -1,6 +1,6 @@
 ---
 - name: Install and Configure Apache HTTP Server
-  hosts: your_ec2_instance
+  hosts: all
   become: true
   tasks:
     - name: Update package repository
