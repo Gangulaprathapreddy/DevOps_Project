@@ -48,4 +48,7 @@ pipeline {
     post {
         always {
             echo 'Post-build actions or cleanup tasks go here'
-        
+            // Additional steps or cleanup tasks go here
+        }
+    }
+}
