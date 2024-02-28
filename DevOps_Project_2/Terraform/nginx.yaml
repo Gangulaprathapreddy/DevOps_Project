@@ -1,3 +1,4 @@
+---
 - name: Installing WebServer
   hosts: all
   remote_user: ec2-user
@@ -5,6 +6,11 @@
   become_user: root
 
   tasks:
-    - name: Update YUM package cache
+    - name: Ensure Nginx is at the Latest Version  # Updated for Nginx
       yum:
-        update_cache: yes
+        name: nginx  # Updated for Nginx
+        state: latest
+    - name: Ensure Nginx is Running  # Updated for Nginx
+      service:
+        name: nginx  # Updated for Nginx
+        state: started
