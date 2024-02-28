@@ -11,7 +11,7 @@ data "aws_ami" "amazon-linux" {
     values = ["hvm"]
   }
 
-  owners = ["amazon"]  # Add this line to specify the owners
+  owners = ["amazon"]
 }
 
 resource "aws_instance" "dev_machine" {
@@ -25,8 +25,9 @@ resource "aws_instance" "dev_machine" {
   }
 }
 
-data "aws_key_pair" "exam_testing" {
-  key_name = "aws-exam-testing.pem"
+resource "aws_key_pair" "exam_testing" {
+  key_name = "aws-exam-testing"  # Note: Remove ".pem" from key_name
+  public_key = file("~/.ssh/aws-exam-testing.pub")  # Replace with the path to your public key file
 }
 
 output "ip" {
@@ -35,6 +36,10 @@ output "ip" {
 
 output "publicName" {
   value = aws_instance.dev_machine.public_dns
+}
+
+output "public_key" {
+  value = aws_key_pair.exam_testing.public_key
 }
 
 
