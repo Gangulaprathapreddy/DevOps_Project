@@ -35,7 +35,7 @@ resource "aws_instance" "dev_machine" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${self.public_dns} > inventory"
+    command = "echo ${self.public_ip} > inventory"
   }
 
   provisioner "local-exec" {
@@ -43,7 +43,7 @@ resource "aws_instance" "dev_machine" {
   }
 
   provisioner "local-exec" {
-    command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./terraform.pem nginx.yaml"
+    command     = "ansible-playbook -i ${self.public_ip}, --private-key ./terraform.pem nginx.yaml"
     working_dir = path.module
   }
 }
