@@ -29,7 +29,7 @@ resource "aws_instance" "dev_machine" {
       host        = self.public_dns
       type        = "ssh"
       user        = "ec2-user"
-      private_key = file("terraform.pem")
+      private_key = "terraform.pem"
     }
   }
 
