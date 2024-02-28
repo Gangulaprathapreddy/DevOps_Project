@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        SERVER_NAME = "your_server_name_here"
+        TERRAFORM_ACTION = "apply" // Change this to "destroy" if needed
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -20,24 +25,25 @@ pipeline {
             }
         }
 
-        stage('Terraform Plan') {
+        stage('Terraform Apply/Destroy') {
             steps {
                 script {
                     dir('DevOps_Project_2/Terraform') {
-                        sh 'terraform plan -out=tfplan'
-                    }
-                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                script {
-                    dir('DevOps_Project_2/Terraform') {
-                        sh 'terraform apply -auto-approve tfplan'
+                        sh """
+                            export TF_VAR_name=${SERVER_NAME}
+                            terraform init
+                            if [ "$TERRAFORM_ACTION" = "apply" ]; then
+                                terraform apply -auto-approve
+                            elif [ "$TERRAFORM_ACTION" = "destroy" ]; then
+                                terraform destroy -auto-approve
+                            else
+                                echo "Invalid action provided. Use 'apply' or 'destroy'."
+                            fi
+                        """
                     }
                 }
             }
         }
     }
 }
+
