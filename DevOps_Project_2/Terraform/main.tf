@@ -1,6 +1,8 @@
 data "aws_ami" "amazon-linux" {
   most_recent = true
 
+  owners = ["amazon"]  # Specify the AWS account ID or alias
+
   filter {
     name   = "name"
     values = ["amzn2-ami-kernel-5.10-hvm-*-x86_64-gp2"]
@@ -13,12 +15,13 @@ data "aws_ami" "amazon-linux" {
 }
 
 resource "aws_instance" "dev_machine" {
-  ami = data.aws_ami.amazon-linux.id
+  ami           = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
-  key_name = "terraform"
+  key_name      = "terraform"
 
   tags = {
     Environment = "dev"
-    Name = "${var.name}-server"
+    Name        = "${var.name}-server"
   }
 }
+
