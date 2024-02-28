@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        TF_VAR_name = "${SERVER_NAME}"
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -42,13 +38,6 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Post-build actions or cleanup tasks go here'
-            // Additional steps or cleanup tasks go here
         }
     }
 }
