@@ -1,16 +1,20 @@
 ---
-- name: Installing WebServer
-  hosts: all
-  remote_user: ec2-user
-  become: yes  # Removed quotes around 'yes'
-  become_user: root
-
+- name: Install and Configure Apache HTTP Server
+  hosts: your_ec2_instance
+  become: true
   tasks:
-    - name: Ensure Nginx is at the Latest Version  # Updated for Nginx
+    - name: Update package repository
       yum:
-        name: nginx  # Updated for Nginx
+        name: '*'
         state: latest
-    - name: Ensure Nginx is Running  # Updated for Nginx
+
+    - name: Install Apache HTTP Server
+      yum:
+        name: httpd
+        state: present
+
+    - name: Start Apache service
       service:
-        name: nginx  # Updated for Nginx
+        name: httpd
         state: started
+        enabled: yes
