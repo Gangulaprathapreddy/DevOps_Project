@@ -23,6 +23,24 @@ resource "aws_instance" "dev_machine" {
     Environment = "dev"
     Name        = "${var.name}-server"
   }
+ provisioner "remote-exec" {
+    inline = ["sudo hostnamectl set-hostname cloudEc2.technix.com"]
+    connection {
+      host        = self.public_dns
+      type        = "ssh"
+      user        = "ec2-user"
+      private_key = file("terraform.pem")
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "echo ${self.public_dns} > inventory"
+  }
+
+  provisioner "local-exec" {
+    command = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key terraform.pem nginx.yaml"
+    working_dir = path.module  # Added to set the working directory
+  }
 }
 output "public_ip" {
   value = aws_instance.dev_machine.public_ip
