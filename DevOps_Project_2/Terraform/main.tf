@@ -1,7 +1,7 @@
 data "aws_ami" "amazon-linux" {
   most_recent = true
 
-  owners = ["amazon"]  # Specify the AWS account ID or alias
+  owners = ["amazon"]
 
   filter {
     name   = "name"
@@ -23,7 +23,8 @@ resource "aws_instance" "dev_machine" {
     Environment = "dev"
     Name        = "${var.name}-server"
   }
- provisioner "remote-exec" {
+
+  provisioner "remote-exec" {
     inline = ["sudo hostnamectl set-hostname cloudEc2.technix.com"]
     connection {
       host        = self.public_dns
@@ -38,10 +39,15 @@ resource "aws_instance" "dev_machine" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./terraform.pem nginx.yaml"
-    working_dir = path.module  # Added to set the working directory
+    command = "chmod 600 ./terraform.pem"
+  }
+
+  provisioner "local-exec" {
+    command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./terraform.pem nginx.yaml"
+    working_dir = path.module
   }
 }
+
 output "public_ip" {
   value = aws_instance.dev_machine.public_ip
 }
