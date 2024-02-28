@@ -22,7 +22,7 @@ resource "aws_instance" "dev_machine" {
   key_name      = "aws-exam-testing.pem"
 
   provisioner "local-exec" {
-    command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip},  nginx.yaml"
+    command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}  nginx.yaml"
     working_dir = path.module  # Added to set the working directory
   }
 }
