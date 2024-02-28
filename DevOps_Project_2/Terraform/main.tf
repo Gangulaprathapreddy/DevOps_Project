@@ -1,3 +1,5 @@
+
+
 data "aws_ami" "amazon-linux" {
   most_recent = true
 
@@ -25,9 +27,8 @@ resource "aws_instance" "dev_machine" {
   }
 }
 
-resource "aws_key_pair" "exam_testing" {
-  key_name = "aws-exam-testing"  # Note: Remove ".pem" from key_name
-  public_key = file("~/.ssh/aws-exam-testing.pub")  # Replace with the path to your public key file
+data "aws_key_pair" "exam_testing" {
+  key_name = "aws-exam-testing"
 }
 
 output "ip" {
@@ -39,8 +40,5 @@ output "publicName" {
 }
 
 output "public_key" {
-  value = aws_key_pair.exam_testing.public_key
+  value = data.aws_key_pair.exam_testing.public_key
 }
-
-
-
