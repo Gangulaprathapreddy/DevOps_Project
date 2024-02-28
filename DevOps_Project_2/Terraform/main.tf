@@ -1,5 +1,7 @@
+
 data "aws_ami" "amazon-linux" {
   most_recent = true
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
@@ -23,7 +25,7 @@ resource "aws_instance" "dev_machine" {
   }
 }
 
-data "aws_key_pair" "exam_testing" {
+resource "aws_key_pair" "exam_testing" {
   key_name = "aws-exam-testing.pem"
 }
 
@@ -36,5 +38,6 @@ output "publicName" {
 }
 
 output "public_key" {
-  value = data.aws_key_pair.exam_testing.public_key
+  value = aws_key_pair.exam_testing.public_key
 }
+
