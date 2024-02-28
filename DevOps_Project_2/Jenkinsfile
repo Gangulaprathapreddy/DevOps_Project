@@ -1,9 +1,10 @@
+
 pipeline {
     agent any
 
-    environment {
-        SERVER_NAME = "your_server_name_here"
-        TERRAFORM_ACTION = "apply" // Change this to "destroy" if needed
+    parameters {
+        choice(name: 'TERRAFORM_ACTION', choices: ['apply', 'destroy'], description: 'Select Terraform Action')
+        string(name: 'SERVER_NAME', defaultValue: 'your_server_name_here', description: 'Enter Server Name')
     }
 
     stages {
@@ -30,11 +31,11 @@ pipeline {
                 script {
                     dir('DevOps_Project_2/Terraform') {
                         sh """
-                            export TF_VAR_name=${SERVER_NAME}
+                            export TF_VAR_name=${params.SERVER_NAME}
                             terraform init
-                            if [ "$TERRAFORM_ACTION" = "apply" ]; then
+                            if [ "${params.TERRAFORM_ACTION}" = "apply" ]; then
                                 terraform apply -auto-approve
-                            elif [ "$TERRAFORM_ACTION" = "destroy" ]; then
+                            elif [ "${params.TERRAFORM_ACTION}" = "destroy" ]; then
                                 terraform destroy -auto-approve
                             else
                                 echo "Invalid action provided. Use 'apply' or 'destroy'."
@@ -46,4 +47,3 @@ pipeline {
         }
     }
 }
-
