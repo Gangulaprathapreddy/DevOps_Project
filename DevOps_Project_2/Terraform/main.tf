@@ -1,4 +1,3 @@
-
 data "aws_ami" "amazon-linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -25,11 +24,9 @@ resource "aws_instance" "dev_machine" {
   }
 }
 
-resource "aws_key_pair" "exam_testing" {
+data "aws_key_pair" "exam_testing" {
   key_name = "aws-exam-testing.pem"
-  public_key = aws_key_pair.exam_testing.public_key  # This assumes AWS automatically provides the public key
 }
-
 
 output "ip" {
   value = aws_instance.dev_machine.public_ip
@@ -40,6 +37,6 @@ output "publicName" {
 }
 
 output "public_key" {
-  value = aws_key_pair.exam_testing.public_key
+  value = data.aws_key_pair.exam_testing.public_key
 }
 
