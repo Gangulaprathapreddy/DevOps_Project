@@ -5,11 +5,6 @@
   become_user: root
 
   tasks:
-    - name: Ensure Nginx is at the Latest Version  # Updated for Nginx
+    - name: Update YUM package cache
       yum:
-        name: nginx  # Updated for Nginx
-        state: latest
-    - name: Ensure Nginx is Running  # Updated for Nginx
-      service:
-        name: nginx  # Updated for Nginx
-        state: started
+        update_cache: yes
