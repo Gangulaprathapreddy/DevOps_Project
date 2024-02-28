@@ -29,7 +29,7 @@ resource "aws_instance" "dev_machine" {
       host        = self.public_dns
       type        = "ssh"
       user        = "ec2-user"
-      private_key = "terraform.pem"
+      private_key = file("terraform.pem")
     }
   }
 
@@ -38,7 +38,7 @@ resource "aws_instance" "dev_machine" {
   }
 
   provisioner "local-exec" {
-    command = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key terraform.pem nginx.yaml"
+    command = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./terraform.pem nginx.yaml"
     working_dir = path.module  # Added to set the working directory
   }
 }
