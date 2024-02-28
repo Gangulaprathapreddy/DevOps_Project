@@ -1,43 +1,36 @@
+data "aws_ami" "amazon-linux" {
+  most_recent = true
 
-resource "aws_instance" "r100c96" {
-  ami               = "ami-0a9d27a9f4f5c0efc"
-  instance_type     = "t2.micro"
-  availability_zone = "ap-south-1b"
-  key_name          = aws_key_pair.exam_testing.key_name
-
-  tags = {
-    Name = "Terraform-diff-linux"
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-kernel-5.10-hvm-*-x86_64-gp2"]
   }
 
-  provisioner "remote-exec" {
-    inline = ["sudo hostnamectl set-hostname cloudEc2.technix.com"]
-    connection {
-      host        = self.public_dns
-      type        = "ssh"
-      user        = "ec2-user"
-      private_key = aws_key_pair.exam_testing.private_key_pem
-    }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
+}
+
+resource "aws_instance" "dev_machine" {
+  ami = data.aws_ami.amazon-linux.id
+  instance_type = "t2.micro"
+  key_name = "aws-exam-testing.pem"
 
   provisioner "local-exec" {
-    command = "echo ${self.public_dns} > inventory"
-  }
-
-  provisioner "local-exec" {
-    command     = "ansible-playbook -i ${aws_instance.r100c96.public_ip}, --private-key ./aws-exam-testing.pem nginx.yaml"
+    command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./aws-exam-testing.pem nginx.yaml"
     working_dir = path.module  # Added to set the working directory
   }
 }
 
-resource "aws_key_pair" "exam_testing" {
-  key_name   = "aws-exam-testing"
-  public_key = file("aws-exam-testing.pub")
-}
-
 output "ip" {
-  value = aws_instance.r100c96.public_ip
+  value = aws_instance.dev_machine.public_ip
 }
 
 output "publicName" {
-  value = aws_instance.r100c96.public_dns
+  value = aws_instance.dev_machine.public_dns
+}
+
+output "public_key" {
+  value = data.aws_key_pair.exam_testing.public_key
 }
