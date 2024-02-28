@@ -1,6 +1,5 @@
 data "aws_ami" "amazon-linux" {
   most_recent = true
-  owners      = ["amazon"]
 
   filter {
     name   = "name"
@@ -11,21 +10,23 @@ data "aws_ami" "amazon-linux" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+
+  owners = ["amazon"]  # Add this line to specify the owners
 }
 
 resource "aws_instance" "dev_machine" {
   ami           = data.aws_ami.amazon-linux.id
   instance_type = "t2.micro"
-  key_name      = "terraform"  # Corrected key name
+  key_name      = "aws-exam-testing.pem"
 
   provisioner "local-exec" {
-    command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./path/to/your/private/key.pem nginx.yaml"  # Update private key path
+    command     = "ansible-playbook -i ${aws_instance.dev_machine.public_ip}, --private-key ./aws-exam-testing.pem nginx.yaml"
     working_dir = path.module  # Added to set the working directory
   }
 }
 
 data "aws_key_pair" "exam_testing" {
-  key_name = "terraform"  # Corrected key name
+  key_name = "aws-exam-testing.pem"
 }
 
 output "ip" {
@@ -36,7 +37,5 @@ output "publicName" {
   value = aws_instance.dev_machine.public_dns
 }
 
-output "public_key" {
-  value = data.aws_key_pair.exam_testing.public_key
-}
+
 
